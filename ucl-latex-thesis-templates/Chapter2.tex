@@ -1,0 +1,19 @@
+\chapter{Background and Related Word}
+\label{chapterlabel2}
+
+Click Through Prediction (CTR) prediction is a well-studied online advertisement problem in recent years. Advertisers 
+
+
+
+ \cite{richardson2007predicting} makes use of logistic regression to predict clicks. \cite{mcmahan2013ad} discusses on the practical engineering of CTR estimation as well as the performance of applying traditional machine learning model on complex huge dataset. Similar models are also discussed. \cite{zhu2010novel} discusses on General Click Model based on Bayesian network. \cite{graepel2010web} talsk aboutOnline Bayesian Probit Regression. 
+
+
+\cite{mohan2011web} discusses on use of GBRT on web ranking
+
+
+Transfer learning is a popular research topic in the fields of artificial intelligence, machine learning, NLP, etc. In the field of machine learning, different from traditional predictive machine learning methods which ignores the difference between train and test sets, in typical real world the source and target sets should suffer from the situation of \textit{dataset shift} \cite{quionero2009dataset}. Therefore, transfer learning will play a role here, which can transfer the knowledge from previous domain to the new domain. \cite{pan2010survey} makes a detailed discussion on transfer learning focusing on categorizing transfer learning for classification, regression, and clustering problems.When the source and target tasks are different, and the source and target domains are same, it is called \textit{inductive transfer learning}.
+
+\cite{he2014practical} discusses how to transform the original feature space into a new one using non-linear GBRT algorithm and use logistic regression model to build the model. 
+
+The gradient boosted decision tree is a non-linear classifier which is composed of a set of separators, the authors stack Gradient Boosted Decision Trees (GBDT) and Logistic Regression (LR) to make LR a linear classifier. They claim that non-linearity with respect to the labels exist in the original feature space. By stacking a GBDT with LR to eliminate the non-linearity in the features is able to give better results.
+

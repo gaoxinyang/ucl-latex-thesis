@@ -1,0 +1,328 @@
+\chapter{Experiment Results}
+\label{chapterlabel7}
+
+\subsection{Experiment Setup, Dataset Introduction and Measurement Method}
+
+In this part, the results of two experiments will be shown. At first, we will represent that the performance of counting feature on non-linear regression model is comparable to that of one-hot binary feature of linear regression model. Secondly, we will show that counting feature performs significantly better than binary feature in cross-domain learning problem. 
+
+For Cross Domain problem, we will do the experiment in the following scenario. An ad company serves for different clients for CTR prediction. Based on the information from old campaigns, it hopes to get accurate CTR prediction result for new campaigns without training new model but directly make use the off-the-shelf model derived from old campaigns. \vspace{5mm}
+
+In this experiment, the whole 14 days dataset will be splitted based on the client id so that in each sub dataset all impressions are from a unique client. To simulate the real world situation that the ad data is not static but performs as a continuous data stream, the new campaign dataset will be further divided into smaller data capsules. Then on the one side, the old campaign dataset will be transformed into binary feature dataset then the model will be trained based on it. Then capsules will be sent into the model in sequence to estimate its CTR thus AUC for test dataset will be obtained. \vspace{5mm}
+
+While on the other side, counting feature bears the advantage that its number of features are limited, and feature values are continuous. So unlike 0-1 binary feature, it is possible to update the feature values as more information from new campaign arrives with fixed model weights. The representation of two scenarios can be represented as follows in Figure ~\ref{fig:binary}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{countingdiagram.png}
+\caption{Estimate new campaign CTR using Binary Feature and Counting Feature Comparison}
+\label{fig:binary}
+\end{figure}
+
+
+
+
+\subsection{Performance Comparison of Binary and Counting Feature in CTR prediction Problem}
+
+In this section two experiments are conducted to compare the CTR prediction performance of Binary and Counting feature in terms of logistic regression and gradient boosting regression tree (GBRT) model. The first experiment is based on the public dataset from Ipinyou, which was released by the Chinese RTB company Ipinyou for global RTB algorithm competition in 2013. The dataset includes logs of ad auctions, bids, impressions, and also clicks \ref{zhang2014real}. All the features except for \textit{Usertag} are used in the experiment due to the bias in that feature. The result is as follows:
+
+
+
+
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{Datasetbias.eps}
+\caption{Three types of relation of feature sets between train dataset and test dataset}
+\label{fig:datasetbias}
+\end{figure}
+
+\subsection{Performance Comparison of Binary and Counting Feature in Cold Start Problem}
+
+In this part, the experiments will be done based on the dataset provided by a ad company in March which includes the data for 14 consecutive days, the dataset are separated by client id so that in each small dataset there are only the impressions from one unique client. In this experiment, the client with more than 500,000 impression are chosen so that 4 sub datasets are obtained which are from distinct clients. The detail of the four clients are shown in Table~\ref{tab:campainid}.
+
+
+\begin{table}[t]
+\centering
+\begin{tabular}{c | c | c | c }
+· 
+\end{tabular}
+\caption{Statistical Information of top 10 advertisement clients}
+\label{tab:campainid}
+\end{table}
+
+\iffalse
+\begin{table}[t]
+ \centering
+ \begin{tabular}{ ||c c || } 
+ \hline
+ Client id  & Number \\
+ \hline
+ 20762 & 1068606 \\ 
+  15140 & 764355 \\ 
+   1371 & 576709 \\ 
+   12482 & 557120\\
+ \hline
+ \end{tabular}
+ \caption{Four Biggest clients}
+ \label{tab:campainid}
+ \end{table}
+ 
+\fi
+
+The figure above shows the truth that dataset significantly decide upper bound of the accuracy to predict CTR. above performance comparison of binary feature and counting feature on CTR estimation reveals that performance of counting feature using non-linear regression model is comparable to that of binary feature using linear regression model, the precondition is that the training and test dataset share most of the features. However, in real world we will always be faced up with the situation that the information is unbalanced in train and test dataset. We define \textit{Feature Set} as a criterion to measure the information obtained in the dataset, which is represented by  \(S_i(f)\), in which \(f\) are the unique features in the dataset \(i\).\vspace{5mm}
+
+The relation of the feature sets in dataset \(i\) and \(j\) can be catogrized into three types, in which \(i\) is the test dataset, and \(j\) is the training dataset, as shown in Figure~\ref{fig:datasetbias}.:
+\begin{itemize}
+\item When \(s_i \subset s_j\), the binary feature should perform better than counting feature in terms of CTR estimation. Since in this way all the feature information needed by test dataset is inclusive in training dataset, the model contains all the infomraiton as a general model, as with the above conclusion when both using linear logistic regression, binary feature is superior to counting feature.  
+\item When \(s_i \cap s_j \equiv 0\), the counting feature should perform better than binary feature which degenerates into random algorithm. The reason is that there is no overlap between \(s_i\) and \(s_j)\), so all feature information in test dataset will be regared as \textit{other} for model derived from training dataset. However, for counting feature, this deficiency can be made up with the gradual increasing information of the dataset distribution. The counting value to some extent represents the feature distribution so when we assume that the train and test dataset share similar feature value distribution counting feature can still perform rather well while at same time prediction using binary feature is totoally impossible.
+\item When \(s_i \cap s_j \neq 0\), the feature informaiton at this time is shared by train and test dataset. We define \textit{General Information} as the information shared by all the advertisement campaigns, and \textit{Specific Information} as the unique feature information owned by each of the campaign. In this situation, both binary feature and counting feature performs well granted that train and test dataset share enough feature information so that the model to some extent is universal among datasets. However, the upper-bound of performance of binary feature is around the AUC result of the CTR prediction for first data capsule in the data stream assuming the distribution among test dataset is identical, conversely, that is the lower-bound of the performance of counting feature since with the increasing of test instances, counting value will tend towards the real distribution of test dataset to compensate of the unbalanced counting weights value. 
+\end{itemize}
+
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{coldstart_first.eps}
+\caption{Performance Comparison of Binary and Counting feature for Cross Domain Learning before Counting Value Updating}
+\label{fig:coldstart_first}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{coldstart.eps}
+\caption{Performance Comparison of Binary and Counting feature for Cross Domain Learning after convergence}
+\label{fig:coldstart}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{coldstartimprove.eps}
+\caption{Performance Comparison of Binary and Counting feature for Cross Domain Learning after convergence}
+\label{fig:coldstartimprove}
+\end{figure}
+
+Figure \ref{fig:coldstart_first} shows the comparison of the performance between binary feature and counting feature before updating counting values. As shown in the diagram above, for binary feature the counting value will be updated between 0 and 1 since it is discrete, however, because the values of counting feature is continuous, so it is possible to update its values with the introduction of new data from new campaign. Figure \ref{fig:coldstart_first} shows the fact that just after training the model from old campaign, directly using it to predict the CTR of new campaign, binary and counting features are suffering from the same bad performance. 
+
+Figure \ref{fig:coldstart} shows the fact that counting feature indeed improve the performance of CTR prediction after a few times updating until convergence. After getting information from the new coming data, the counting value will be changed to represent the distribution of the new campaign somehow, which takes over the responsibility from the binary weights space. However for binary feature since its feature space is fixed so changing between 0 and 1 cannot represent the distribution of the new campaign so there is no performance improvement for binary feature after the updating. 
+
+Figure \ref{fig:coldstartimprove} demonstrates the conclusion in last above well. If we assume that the distribution of the new campaign is identical, the performance of the CTR prediction in terms of AUC should be the same among all sub-dataset of the new campaign. We define  \(AUC_{\text{before}}\) as the CTR prediction performance for the first capsule of new campaign data, when there is no counting value update from new campaign and we can only predict it based on the model from the old campaign. We also define \(AUC_{\text{after}}\) as the peformance of binary or counting feature after all the information of the new campaign has been obtained by the model and it becomes converged. In Figure \ref{fig:coldstartimprove} we compare the\({AUC_{\text{after}}}/{AUC_{\text{before}}}\)
+for binary feature and counting feature.From the plot it shows that for binary feature there is no improvement for most cases since the value is around 1 and for counting feature the improvement is high. 
+
+
+
+Figure \ref{fig:matrixbefore} \ref{fig:matrixafter} and \ref{fig:matriximprove} shows the details of the result.In Figure \ref{fig:matrixbefore} we calculate \((AUC_{\text{before(count)}} - AUC_{\text{before(bi)}}) / AUC_{\text{before(bi)}} \) to show how counting feature improves the performance compared to binary feature before updating the counting values, the result shows that counting feature performs bad which is not surprising. 
+
+In Figure \ref{fig:matrixafter} we shows the same calculating for that but after updating the counting values.  \((AUC_{\text{after(count)}} - AUC_{\text{after(bi)}}) / AUC_{\text{after(bi)}} \) is shown in the matrix. Green shows that the counting feature performs better than binary feature, and the percentage value shows by how many percents do the counting feature obtains in terms of CTR AUC performance. It shows that excluding the diagonal in which the train and test dataset are the same, so the binary feature should perform better than counting feature, In 61 out of 90 experiments counting feature performs better than binary feature, which is much better than we can see in Matrix \ref{fig:matrixbefore}.
+
+Figure \ref{fig:matriximprove} calculates 
+\((AUC_{\text{after(count)}}/AUC_{\text{before(count)}} -AUC_{\text{after(bi)}}/AUC_{\text{before(bi)}})  / (AUC_{\text{after(bi)}}/AUC_{\text{before(bi)}})  \), which shows that after updating the counting value, whether counting feature gains more performance improvement than binary feature, result shows that counting feature indeed improves much more than binary feature whose upper bound of CTR estimation is decided when the first subset of data comes. 
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{matrixbefore.eps}
+\caption{Percentage of Performance Improvement of Counting Feature to Binary Feature in Cross Domain Learning before Counting Value Updating}
+\label{fig:matrixbefore}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{matrixafter.eps}
+\caption{Percentage of Performance Improvement of Counting Feature to Binary Feature in Cross Domain Learning After Convergence}
+\label{fig:matrixafter}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{matriximprove.eps}
+\caption{Percentage of Performance Improvement of Counting Feature Compared to Binary Feature}
+\label{fig:matriximprove}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{variance.eps}
+\caption{Cross-validation of binary and counting feature dataset mean and variance}
+\label{fig:variance}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{2261.eps}
+\caption{Performance 2261}
+\label{fig:2261}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{2997.eps}
+\caption{Performance 2997}
+\label{fig:2997}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{3386.eps}
+\caption{Performance 3386}
+\label{fig:3386}
+\end{figure}
+
+
+% The data from 3-14 to 3-27 are regarded as training dataset, the data from 5- are regarded as test dataset, the count of training dataset is, test dataset is ~\ref{tab:campainid}
+
+% \begin{table*}[h]
+% \centering
+% \begin{tabular}{ |c|c|c|c| } 
+% \hline
+% Shared Campaign  & Unique Train Dataset Campaign & Unique Test Dataset Campaign \\
+% \hline
+% 1310190 & 1307617, 884194, 1283235, 1335301  & 1466432, 1448738 \\ 
+% & 1385319, 1349577, 1276074, 1363723 & 1406405, 1424966 \\ 
+% &  1357245, 1341802, 1341937, 1307838 & 1424330, 1445998 \\ 
+% &  1285558, 1358167, 1305663, 1299899 & 1458704, 1454382 \\
+% &  1363711, 1386205, 1368830, 1366271 &  1472727, 1452138 \\
+% \hline
+% \end{tabular}
+% \label{tab:campainid}
+% \end{table}
+
+% Only the instances from the campaign with more than 500 clicks and 50000 impressions will be remained, the campaigns can be classified as the ones shared by the training and test dataset, the ones unique to training dataset and the one unique to test dataset.  
+
+% \(1/3\) of the training dataset is used as train dataset, \(2/3\) will be used as count dataset. In order to increase the generalization of training dataset to improve the universality of the trained prediction model, four campaign will constitute one training dataset and two campaigns are used to make up a test dataset to decrease the bias of test dataset.  
+
+% For the sake of convenience, the training dataset will be labeled as 1,2,3,4 and 5, from top to the bottom, as well as the test dataset. For each training dataset, the prediction model will be build based on it which will be used to test the data stream from each of the test dataset, the result is in 6.3.
+
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{cos}
+        \caption{Cos Similarity Comparison Between Pairwise of Binary Feature and Counting Feature}
+        \label{fig:cos}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{correlation}
+        \caption{Correlation Similarity Comparison Between Pairwise of Binary Feature and Counting Feature}
+        \label{fig:correlation}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.3\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{euclidean}
+        \caption{Euclidean Distance Comparison Between Pairwise of Binary Feature and Counting Feature}
+        \label{fig:euclidean}
+    \end{subfigure}
+    \caption{Comparison of Binary and Counting Feature Model Weights Space}
+    \label{fig:three graphs}
+\end{figure*}
+
+
+Figure \ref{fig:variance} shows that the variance and mean for binary and counting feature dataset are nearly the same. 
+
+Figure \ref{fig:three graphs} shows that the similarity among weights space for counting feature is higher than counting feature. 
+
+
+
+\iffalse
+Experiment 1.1: Training Dataset  (20762), Test Dataset  (15140) in Figure~\ref{fig:fig1}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{20762_15140.eps}
+\caption{Training Dataset  (20762), Test Dataset  (15140)}
+\label{fig:fig1}
+\end{figure}
+
+Experiment 1.2: Training Dataset  (20762), Test Dataset  (1371) in Figure~\ref{fig:fig2}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{20762_1371.eps}
+\caption{Training Dataset  (20762), Test Dataset  (1371)}
+\label{fig:fig2}
+\end{figure}
+
+Experiment 1.3: Training Dataset  (20762), Test Dataset  (12482) in Figure~\ref{fig:fig2}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{20762_12482.eps}
+\caption{ Training Dataset  (20762), Test Dataset  (12482)}
+\label{fig:fig2}
+\end{figure}
+
+Experiment 2.1: Training Dataset  (15140), Test Dataset  (20762) in Figure~\ref{fig:fig3}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{15140_20762.eps}
+\caption{Training Dataset  (15140), Test Dataset  (20762)}
+\label{fig:fig3}
+\end{figure}
+
+Experiment 2.2: Training Dataset  (15140), Test Dataset  (1371) in Figure~\ref{fig:fig4}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{15140_1371.eps}
+\caption{Training Dataset  (15140), Test Dataset  (1371)}
+\label{fig:fig4}
+\end{figure}
+
+Experiment 2.3: Training Dataset  (15140), Test Dataset  (12482) in Figure~\ref{fig:fig5}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{15140_12482.eps}
+\caption{Training Dataset  (15140), Test Dataset  (12482) }
+\label{fig:fig5}
+\end{figure}
+
+Experiment 3.1: Training Dataset  (1371), Test Dataset  (20762) in Figure~\ref{fig:fig6}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{1371_20762.eps}
+\caption{ Training Dataset  (1371), Test Dataset  (20762)}
+\label{fig:fig6}
+\end{figure}
+
+Experiment 3.2: Training Dataset  (1371), Test Dataset  (15140) in Figure~\ref{fig:fig7}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{1371_15140.eps}
+\caption{Training Dataset  (1371), Test Dataset  (15140)}
+\label{fig:fig7}
+\end{figure}
+
+Experiment 3.3: Training Dataset  (1371), Test Dataset  (12482) in Figure~\ref{fig:fig8}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{1371_12482.eps}
+\caption{Training Dataset  (1371), Test Dataset  (12482)}
+\label{fig:fig8}
+\end{figure}
+
+Experiment 4.1: Training Dataset  (12482), Test Dataset  (20762) in Figure~\ref{fig:fig9}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{12482_20762.eps}
+\caption{Training Dataset  (12482), Test Dataset  (20762)}
+\label{fig:fig9}
+\end{figure}
+
+Experiment 4.2: Training Dataset  (12482), Test Dataset  (1371) in Figure~\ref{fig:fig10}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{12482_1371.eps}
+\caption{Training Dataset  (12482), Test Dataset  (1371)}
+\label{fig:fig10}
+\end{figure}
+
+Experiment 4.2: Training Dataset  (12482), Test Dataset  (15140) in Figure~\ref{fig:fig11}.:
+\begin{figure}[h]
+\centering
+\includegraphics[width=\columnwidth]{12482_15140.eps}
+\caption{Training Dataset  (12482), Test Dataset  (15140)}
+\label{fig:fig11}
+\end{figure}
+
+\fi
+
+

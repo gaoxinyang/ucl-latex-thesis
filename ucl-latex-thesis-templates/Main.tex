@@ -1,0 +1,86 @@
+\RequirePackage[l2tabu, orthodox]{nag}
+
+
+% ------ Main document class specification ------
+% The draft option here prevents images being inserted,
+%  and adds chunky black bars to boxes that are exceeding 
+%  the page width (to show that they are).
+% The oneside option can optionally be replaced by twoside if
+%  you intend to print double-sided. Note that this is
+%  *specifically permitted* by the UCL thesis formatting
+%  guidelines.
+%
+% Valid options in terms of type are:
+%  phd
+%  mres
+%  mphil
+%\documentclass[12pt,phd,draft,a4paper,oneside]{ucl_thesis}
+\documentclass[12pt,phd,a4paper,oneside]{ucl_thesis}
+
+
+% Package configuration:
+%  LaTeX uses "packages" to add extra commands and features.
+%  There are quite a few useful ones, so we've put them in a 
+%   separate file.
+\input{MainPackages}
+
+% Sets up links within your document, for e.g. contents page entries
+%  and references, and also PDF metadata.
+% You should edit this!
+\input{LinksAndMetadata}
+
+% And then some settings in separate files.
+\input{FloatSettings} % For things like figures and tables
+\input{BibSettings}   % For bibliographies
+
+% Title Settings
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\title{Counting Features for Cross Domain Learning}
+\author{Xinyang Gao}
+\department{Department of Computer Science}
+
+
+\begin{document}
+
+
+
+\nobibliography*
+% This is a dumb trick that works with the bibentry package to let
+%  you put bibliography entries whereever you like.
+% I used this to put references to papers a chapter's work was 
+%  published in at the end of that chapter.
+% For more information, see: http://stefaanlippens.net/bibentry
+
+% If you haven't finished making your full BibTex file yet, you
+%  might find this useful -- it'll just replace all your
+%  citations with little superscript notes.
+% Uncomment to use.
+%\renewcommand{\cite}[1]{\emph{\textsuperscript{[#1]}}}
+
+% At last, content! Remember filenames are case-sensitive and 
+%  *must not* include spaces.
+\include{Preamble}
+\include{Introduction}
+\include{Chapter2}
+\include{Chapter3}
+\include{Chapter4}
+\include{Chapter5}
+\include{Chapter6}
+\include{Chapter7}
+\include{Conclusions}
+\include{Appendices} 
+% You could separate these out into different files if you have
+%  particularly large appendices.
+
+% This line manually adds the Bibliography to the table of contents.
+% The fact that \include is the last thing before this ensures that it
+% is on a clear page, and adding it like this means that it doesn't
+% get a chapter or appendix number.
+\addcontentsline{toc}{chapter}{Bibliography}
+
+% Actually generates your bibliography.
+\bibliography{example}
+
+% All done. \o/
+\end{document}

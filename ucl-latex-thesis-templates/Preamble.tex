@@ -1,0 +1,19 @@
+\maketitle
+\makedeclaration
+
+\begin{abstract} % 300 word limit
+In Click-Through Rate (CTR) estimation problems for online advertising, the feature engineering work is a crucial part. For example, Baidu extracts hundreds of billions of binary features (or called model features) to train a huge linear regression estimator. On the other side, there is another kind of features, called counting features, representing statistical property of the dataset and flexible in changing value, which are always continuous and normally only have less than 1000 in number in CTR estimation tasks. For a simple example, consider the user city feature. For the binary model features, if there are 10k cities in the dataset, there should be 10k unique binary features, of which only one has the value 1 while others are all valued as 0 (referred as one-hot encoding). For counting features, there are only two for the city description no matter how many cities there are in the dataset: (i) the average CTR given the city (e.g., 0.12\% for Shanghai); (ii) the frequency of such city in the dataset (e.g., 10 million). In this paper, we exploited the property and performance of counting feature compared to binary feature using valuable real world data provided by Adform. AUC and RMSE are used as criterion for performance comparison which shows that performance of counting feature utilising non-linear regression model is comparable to that of binary feature utilising linear regression model, which is also supported by mathematical justification. Further, we apply counting feature theory on cross-domain learning, the goal is to solve the canonical \textit{cold start} problem for online advertisement CTR prediction, so that model trained from existing campaigns can be directly used by new campaign without updating model weights but updating counting values. Mathematically by transferring high dimensional binary feature space into low dimensional binary feature space, variability of model can be decreased while similarities among models will be enhanced, thus increasing the generality of CTR prediction model and making \textit{non-weights-update} cross domain CTR prediction model possible. Experiment results validate our assumption and shows counting feature performs much better than binary feature with stable model but variable feature values. By analysing dataset similarities we show that the accuracy CTR prediction enhancement is indeed resulted from the formation of counting feature but not the dimensionality reduction.  
+\end{abstract}
+
+\begin{acknowledgements}
+Acknowledge all the things!
+\end{acknowledgements}
+
+\setcounter{tocdepth}{2} 
+% Setting this higher means you get contents entries for
+%  more minor section headers.
+
+\tableofcontents
+\listoffigures
+\listoftables
+
