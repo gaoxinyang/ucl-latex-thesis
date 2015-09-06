@@ -1,23 +1,1176 @@
-\addcontentsline{toc}{chapter}{Appendices}
+%\addcontentsline{toc}{chapter}{Appendices}
 
 % The \appendix command resets the chapter counter, and changes the chapter numbering scheme to capital letters.
 %\chapter{Appendices}
 \appendix
-\chapter{An Appendix About Stuff}
+\chapter{List of Code}
 \label{appendixlabel1}
-(stuff)
+1. Make Feature \\
+(1). Make Binary Feature
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+import pandas as pd
+import sys
+import numpy as np
+import operator
+import random
+from collections import Counter
+from math import sqrt
+from random import shuffle
+import math
+def getsecondfeature(frame_train_count):
+    columns1= ['log_date', 'log_time_hour', 'client_id', 'placement_id', \\
+    'inventory_source_id', 'url', 'position_id', 'size', 'browser_id', \\
+'os_id', 'user_agent', 'screen_size_id', 'visited_domains', 'visited_logpoints', 'clicker']
+    count_valid = {}
+    second = {}
+    second_valid = {}
+    second_whole = []
 
-\chapter{Another Appendix About Things}
-\label{appendixlabel2}
-(things)
+    for idx1, val1 in enumerate(columns1):
+        for idx2, val2 in enumerate(columns1[idx1+1:]):
+            second[val1] = frame_train_count.groupby([val1, val2])\\
+            [val1].count()
+            second_valid[val1] = [key for key in second[val1].keys() if \\
+            second[val1][key] > 10000]
+            second_whole.extend(second_valid[val1])
+            second_whole.append(val1+':other')\\
+    return second_whole
 
-\chapter{Colophon}
-\label{appendixlabel3}
-\textit{This is a description of the tools you used to make your thesis. It helps people make future documents, reminds you, and looks good.}
+def notlast(itr):
+    itr = iter(itr)  # ensure we have an iterator
+    prev = itr.next()
+    for item in itr:
+        yield prev
 
-\textit{(example)} This document was set in the Times Roman typeface using \LaTeX\ and Bib\TeX , composed with a text editor. 
- % description of document, e.g. type faces, TeX used, TeXmaker, packages and things used for figures. Like a computational details section.
-% e.g. http://tex.stackexchange.com/questions/63468/what-is-best-way-to-mention-that-a-document-has-been-typeset-with-tex#63503
+        prev = item
+print 'start'
+file = sys.argv[1]
+file = int(float(file))
+cnt = Counter()
+ctrcount = Counter()
+pd.options.display.float_format = '{:.25f}'.format
 
-% Side note:
-%http://tex.stackexchange.com/questions/1319/showcase-of-beautiful-typography-done-in-tex-friends
+columns = ['log_date', 'log_time_hour',
+           'inventory_source_id', 'position_id', 'size', 'browser_id', 'os_id', 'user_agent',
+           'screen_size_id', 'visited_domains', 'visited_logpoints', 'clicker', 'click_count']
+
+columns1= ['log_date', 'log_time_hour', 'client_id', 'placement_id',
+           'inventory_source_id', 'domain', 'url', 'position_id', 'size', 'browser_id', 'os_id', 'user_agent',
+           'screen_size_id', 'visited_domains', 'visited_logpoints', 'clicker']
+
+path_train_train = '%d/train.train.txt' % file
+path_train_count = '%d/train.count.txt' %file
+path_test_test = '%d/test.test.txt' % file
+path_test_valid = '%d/test.valid.txt' % file
+
+fo_train = open('%d/train.bi.txt' %file, 'w')
+fo_test_test = open('%d/test.bi.test.txt' % file, 'w')
+fo_test_valid = open('%d/test.bi.valid.txt' % file, 'w')
+fo_index = open('%d/index.txt' % file, 'w')
+
+frame_train_train = pd.read_csv(path_train_train,dtype=str,\\
+error_bad_lines = False)
+frame_train_count = pd.read_csv(path_train_count,dtype=str,\\
+error_bad_lines = False)
+frame_test_test = pd.read_csv(path_test_test,dtype=str,\\
+error_bad_lines = False)
+frame_test_valid = pd.read_csv(path_test_valid,dtype=str,\\
+error_bad_lines = False)
+total_length = len(frame_train_count)
+dict_unique = {}
+
+length = 0
+frame_train_count = pd.DataFrame(frame_train_count, columns=columns)
+
+for c_index in range(0, len(columns) - 1):
+    seri_train_count = frame_train_count.ix[1:len(frame_train_count)-1,\\
+    c_index]
+
+    seri_train_count = seri_train_count[~seri_train_count.isnull()]
+    unique_s = seri_train_count.unique()
+    unique_s = unique_s.tolist() + ['other']
+    index = 0
+    unique_list = []
+    dict_u = {}
+    for u in range(0, len(unique_s)):
+        dict_u[unique_s[u]] = u + length
+    dict_unique[columns[c_index]] = dict_u
+    length = length + len(unique_s)
+index = 0
+record_length = 0
+for column in notlast(columns):
+    index = index + 1
+    dict_u = dict_unique[column]
+    record_length = record_length + len(dict_u)
+    for key in dict_u:
+        fo_index.write(str(index) + ':' + str(key) + ' ' + str(dict_u[key]))
+        fo_index.write('\n')
+record_length = record_length + 100
+record_length = 2155314
+
+        # ctr[column] = (frame_train_ctr.groupby(column).size()/float(count[column])).fillna(0)
+for index, row in frame_train_train.iterrows():
+    if row[-1] == str(0) or row[-1] == 0:
+        fo_train.write(str(0))
+    else:
+        fo_train.write(str(1))
+
+    for column in notlast(columns):
+        dict_u = dict_unique[column]
+        if row[column] not in dict_u:
+            id = dict_u['other']
+            fo_train.write(' ' + str(id) + ':' + str(1))
+        else:
+            id = dict_u[row[column]]
+            fo_train.write(' ' + str(id) + ':' + str(1))
+
+    fo_train.write('\n')
+fo_train.close()
+
+for index, row in frame_test_test.iterrows():
+    if row[-1] == str(0) or row[-1] == 0:
+        fo_test_test.write(str(0))
+    else:
+        fo_test_test.write(str(1))
+
+    for column in notlast(columns):
+        dict_u = dict_unique[column]
+        if row[column] not in dict_u:
+            id = dict_u['other']
+            fo_test_test.write(' ' + str(id) + ':' + str(1))
+        else:
+            id = dict_u[row[column]]
+            fo_test_test.write(' ' + str(id) + ':' + str(1))
+
+    fo_test_test.write('\n')
+fo_test_test.close()
+
+\end{lstlisting}
+(2) Make Counting Feature
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+import pandas as pd
+import sys
+import operator
+import random
+from collections import Counter
+from math import sqrt
+from random import shuffle
+import math
+import matplotlib.pyplot as plt
+import numpy as np
+
+def notlast(itr):
+    itr = iter(itr)  # ensure we have an iterator
+    prev = itr.next()
+    for item in itr:
+        yield prev
+        prev = item
+def median(mylist):
+    sorts = sorted(mylist)
+    length = len(sorts)
+    if not length % 2:
+        return (sorts[length / 2] + sorts[length / 2 - 1]) / 2.0
+    return sorts[length / 2]
+
+def k_means(data_pts, k=None):
+    """ Helper functions """
+
+    def lists_are_same(la, lb):  # see if two lists have the same elements
+        out = False
+        for item in la:
+            if item not in lb:
+                out = False
+                break
+            else:
+                out = True
+        return out
+
+    def distance(a, b):  # distance between (x,y) points a and b
+        return sqrt(abs(a[0] - b[0]) ** 2 + abs(a[1] - b[1]) ** 2)
+
+    def average(a):  # return the average of a one-dimensional list (e.g., [1, 2, 3])
+        return sum(a) / float(len(a))
+
+    """ Set up some initial values """
+    if k is None:  # if the user didn't supply a number of means to look for, try to estimate how many there are
+        n = len(data_pts)  # number of points in the dataset
+        k = int(sqrt(n / 2))  # number of clusters - see
+        #   http://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set#Rule_of_thumb
+    if k < 1:  # make sure there's at least one cluster
+        k = 1
+
+    """ Randomly generate k clusters and determine the cluster centers,
+        or directly generate k random points as cluster centers. """
+
+    init_clusters = data_pts[:]  # put all of the data points into clusters
+    shuffle(init_clusters)  # put the data points in random order
+    init_clusters = init_clusters[0:k]  # only keep the first k random clusters
+
+    old_clusters, new_clusters = {}, {}
+    for item in init_clusters:
+        old_clusters[item] = []  # every cluster has a list of points associated with it. Initially, it's 0
+
+    while 1:  # just keep going forever, until our break condition is met
+        tmp = {}
+        for k in old_clusters:  # create an editable version of the old_clusters dictionary
+            tmp[k] = []
+
+        """ Associate each point with the closest cluster center. """
+        for point in data_pts:  # for each (x,y) data point
+            min_clust = None
+            min_dist = 1000000000  # absurdly large, should be larger than the maximum distance for most data sets
+            for pc in tmp:  # for every possible closest cluster
+                pc_dist = distance(point, pc)
+                if pc_dist < min_dist:  # if this cluster is the closest, have it be the closest (duh)
+                    min_dist = pc_dist
+                    min_clust = pc
+            tmp[min_clust].append(point)  # add each point to its closest cluster's list of associated points
+
+        """ Recompute the new cluster centers. """
+        for k in tmp:
+            associated = tmp[k]
+            xs = [pt[0] for pt in associated]  # build up a list of x's
+            ys = [pt[1] for pt in associated]  # build up a list of y's
+            x = average(xs)  # x coordinate of new cluster
+            y = average(ys)  # y coordinate of new cluster
+            new_clusters[(
+            x, y)] = associated  # these are the points the center was built off of, they're *probably* still associated
+
+        if lists_are_same(old_clusters.keys(), new_clusters.keys()):  # if we've reached equilibrium, return the points
+            return old_clusters.keys()
+        else:  # otherwise, we'll go another round. let old_clusters = new_clusters, and clear new_clusters.
+            old_clusters = new_clusters
+            new_clusters = {}
+
+file = sys.argv[1]
+file = int(float(file))
+cnt = Counter()
+ctrcount = Counter()
+count = {}
+ctr = {}
+test_count = {}
+pd.options.display.float_format = '{:.25f}'.format
+
+columns = ['log_date', 'log_time_hour',
+           'inventory_source_id', 'position_id', 'size', 'browser_id', 'os_id', 'user_agent',
+           'screen_size_id', 'visited_domains', 'visited_logpoints', 'clicker', 'click_count']
+
+path_train_train = '%d/train.train.txt' % file
+path_train_count = '%d/train.count.txt' % file
+path_test_test = '%d/test.test.txt' % file
+path_test_valid = '%d/test.valid.txt' % file
+
+fo_train = open('%d/train.countfeature.txt' % file, 'w')
+fo_test_test = open('%d/test.countfeature.test.txt' % file, 'w')
+fo_test_valid = open('%d/test.countfeature.valid.txt' % file, 'w')
+fo_index = open('%d/index_count.txt' % file, 'w')
+fo_count_index = open('%d/index_countfeature.txt' % file, 'w')
+
+index = 0
+for column in notlast(columns):
+
+    fo_count_index.write(column + ':' + 'frequency' + ' ' + str(index))
+    index = index + 1
+    fo_count_index.write('\n')
+    fo_count_index.write(column + ':' + 'averagectr' + ' ' + str(index))
+    index = index + 1
+    fo_count_index.write('\n')
+
+#print 'start'
+frame_train_train = pd.read_csv(path_train_train, dtype=str,error_bad_lines = False)
+frame_train_count = pd.read_csv(path_train_count, dtype=str,error_bad_lines = False)
+frame_test_test = pd.read_csv(path_test_test, dtype=str,error_bad_lines = False)
+frame_test_valid = pd.read_csv(path_test_valid, dtype=str,error_bad_lines = False)
+total_length = len(frame_train_count)
+test_total_length = len(frame_test_test)
+
+for column in columns:
+    count[column] = frame_train_count.groupby(column).size()
+    test_count[column] = frame_test_test.groupby(column).size()
+
+frame_train_ctr = frame_train_count[(frame_train_count.click_count == str(1))]
+aver_count = {}
+aver_ctr = {}
+
+index = 1
+for column in notlast(columns):
+    count[column] = count[column].astype(float)
+    #ctr[column] = math.log10((frame_train_ctr.groupby(column).size() / count[column]).fillna(0) + math.pow(10, -100))
+    ctr[column] = ((frame_train_ctr.groupby(column).size() / count[column]).fillna(0))
+
+    test_count[column] = test_count[column].astype(float)/float(test_total_length)
+    count[column] = count[column].astype(float)/float(total_length)
+
+    l = count[column].values.tolist()
+    lctr = ctr[column].values.tolist()
+    if len(l) == 0:
+        aver_count[column] = 0
+
+    else:
+        aver_count[column] = sum(l)/float(len(l))
+    if len(lctr) == 0:
+        aver_ctr[column] = 0
+
+    else:
+        aver_ctr[column] = sum(lctr)/float(len(lctr))
+        
+# ctr[column] = (frame_train_ctr.groupby(column).size()/float(count[column])).fillna(0)
+for index, row in frame_train_train.iterrows():
+    id = 0
+    if row[-1] == str(0) or row[-1] == 0:
+        fo_train.write(str(0))
+    else:
+        fo_train.write(str(1))
+
+    for column in notlast(columns):
+
+        if column != 'click_count':
+
+            if row[column] in count[column]:
+                fo_train.write(' ' + str(id) + ':' + str(count[column][row[column]]))
+                id = id + 1
+                fo_train.write(' ' + str(id) + ':' + str(ctr[column][row[column]]))
+                id = id + 1
+            else:
+
+
+                fo_train.write(' ' + str(id) + ':' + str(aver_count[column]))
+                id = id + 1
+                fo_train.write(' ' + str(id) + ':' + str(aver_ctr[column]))
+                id = id + 1
+    fo_train.write('\n')
+
+fo_train.close()
+
+for index, row in frame_test_test.iterrows():
+
+    id = 0
+    if row[-1] == str(0) or row[-1] == 0:
+        fo_test_test.write(str(0))
+    else:
+        fo_test_test.write(str(1))
+
+    for column in notlast(columns):
+
+        if column != 'click_count':
+
+            if row[column] in count[column]:
+
+                fo_test_test.write(' ' + str(id) + ':' + str(count[column][row[column]]))
+                id = id + 1
+                fo_test_test.write(' ' + str(id) + ':' + str(ctr[column][row[column]]))
+                id = id + 1
+            else:
+                fo_test_test.write(' ' + str(id) + ':' + str(aver_count[column]))
+                id = id + 1
+                fo_test_test.write(' ' + str(id) + ':' + str(aver_ctr[column]))
+                id = id + 1
+    fo_test_test.write('\n')
+
+fo_test_test.close() 
+\end{lstlisting}
+2 Cold Start Experiment for Binary Feature
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+import pandas as pd
+import sys
+import operator
+import random
+from collections import Counter
+from math import sqrt
+import math
+import matplotlib.pyplot as plt
+import collections
+from random import shuffle
+import subprocess
+import os
+import numpy as np
+
+
+def log_10_product(x, pos):
+    """The two args are the value and tick position.
+    Label ticks with the product of the exponentiation"""
+    return '%1i' % (x)
+
+
+def k_means(data_pts, k=None):
+    """ Helper functions """
+
+    def lists_are_same(la, lb):  # see if two lists have the same elements
+        out = False
+        for item in la:
+            if item not in lb:
+                out = False
+                break
+            else:
+                out = True
+        return out
+
+    def distance(a, b):  # distance between (x,y) points a and b
+        return sqrt(abs(a[0] - b[0]) ** 2 + abs(a[1] - b[1]) ** 2)
+
+    def average(a):  # return the average of a one-dimensional list (e.g., [1, 2, 3])
+        return sum(a) / float(len(a))
+
+    """ Set up some initial values """
+    if k is None:  # if the user didn't supply a number of means to look for, try to estimate how many there are
+        n = len(data_pts)  # number of points in the dataset
+        k = int(sqrt(n / 2))  # number of clusters - see
+        #   http://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set#Rule_of_thumb
+    if k < 1:  # make sure there's at least one cluster
+        k = 1
+
+    """ Randomly generate k clusters and determine the cluster centers,
+        or directly generate k random points as cluster centers. """
+
+    init_clusters = data_pts[:]  # put all of the data points into clusters
+    shuffle(init_clusters)  # put the data points in random order
+    init_clusters = init_clusters[0:k]  # only keep the first k random clusters
+
+    old_clusters, new_clusters = {}, {}
+    for item in init_clusters:
+        old_clusters[item] = []  # every cluster has a list of points associated with it. Initially, it's 0
+
+    while 1:  # just keep going forever, until our break condition is met
+        tmp = {}
+        for k in old_clusters:  # create an editable version of the old_clusters dictionary
+            tmp[k] = []
+
+        """ Associate each point with the closest cluster center. """
+        for point in data_pts:  # for each (x,y) data point
+            min_clust = None
+            min_dist = 1000000000  # absurdly large, should be larger than the maximum distance for most data sets
+            for pc in tmp:  # for every possible closest cluster
+                pc_dist = distance(point, pc)
+                if pc_dist < min_dist:  # if this cluster is the closest, have it be the closest (duh)
+                    min_dist = pc_dist
+                    min_clust = pc
+            tmp[min_clust].append(point)  # add each point to its closest cluster's list of associated points
+
+        """ Recompute the new cluster centers. """
+        for k in tmp:
+            associated = tmp[k]
+            xs = [pt[0] for pt in associated]  # build up a list of x's
+            ys = [pt[1] for pt in associated]  # build up a list of y's
+            x = average(xs)  # x coordinate of new cluster
+            y = average(ys)  # y coordinate of new cluster
+            new_clusters[(
+                x,
+                y)] = associated  # these are the points the center was built off of, they're *probably* still associated
+
+        if lists_are_same(old_clusters.keys(), new_clusters.keys()):  # if we've reached equilibrium, return the points
+            return old_clusters.keys()
+        else:  # otherwise, we'll go another round. let old_clusters = new_clusters, and clear new_clusters.
+            old_clusters = new_clusters
+            new_clusters = {}
+
+
+def getplacement(path_train):
+    frame_train = pd.read_csv(path_train)
+    count = {}
+    ctr = {}
+    length = len(frame_train)
+    frame_train_count = frame_train
+    # print frame_train[:10]
+    column = 'placement_id'
+
+    count[column] = frame_train_count.groupby(column).size()
+    count[column] = count[column].astype(float)
+    frame_train_ctr = frame_train_count[(frame_train_count.click_count == 1)]
+    ctr[column] = frame_train_ctr.groupby(column).size()
+    dict_count = count[column]
+    dict_ctr = ctr[column]
+    clickhuge = [k for k in dict_ctr.keys() if dict_ctr[k] >= 500 and dict_count[k] >= 30000]
+
+    return (count, ctr, clickhuge)
+
+def getclient(path_train):
+    frame_train = pd.read_csv(path_train)
+    count = {}
+    ctr = {}
+    length = len(frame_train)
+    frame_train_count = frame_train
+    # print frame_train[:10]
+    column = 'client_id'
+
+    count[column] = frame_train_count.groupby(column).size()
+    count[column] = count[column].astype(float)
+    frame_train_ctr = frame_train_count[(frame_train_count.click_count == 1)]
+    ctr[column] = frame_train_ctr.groupby(column).size()
+    dict_count = count[column]
+    dict_ctr = ctr[column]
+    clickhuge = [k for k in dict_ctr.keys() if dict_ctr[k] >= 400]
+    return (count, ctr, clickhuge)
+
+
+cnt = Counter()
+ctrcount = Counter()
+pd.options.display.float_format = '{:.30f}'.format
+file = sys.argv[1]
+file = int(float(file))
+
+path_train = '%d/train.log.txt' % file
+path_test = '%d/test.log.txt' % file
+
+ccc1 = []
+ccc2 = []
+
+cc1 = []
+cc2 = []
+c1 = sys.argv[2]
+c1 = int(float(c1))
+cc1.append(c1)
+c2 = sys.argv[3]
+c2 = int(float(c2))
+cc2.append(c2)
+column = 'client_id'
+frame_train = pd.read_csv(path_train)
+frame_test = frame_train
+
+ccc1 = cc1
+frame_train_wihout_cc = frame_train.loc[frame_train[column].isin(ccc1)]
+rows = random.sample(frame_train_wihout_cc.index, (len(frame_train_wihout_cc.index) / 3))
+frame_train_train = frame_train_wihout_cc.ix[rows]
+frame_train_count = frame_train_wihout_cc.drop(rows)
+print 'step1'
+#ccc2.append(cc2[1])
+ccc2 = cc2
+frame_test_with_cc = frame_train.loc[frame_train[column].isin(ccc2)]
+frame_test_with_cc=frame_test_with_cc.iloc[np.random.permutation(len(frame_test_with_cc))]
+frame_test_with_cc = frame_test_with_cc.reset_index(drop=True)
+
+wholelength = len(frame_test_with_cc)
+print wholelength
+windowrange = 50000
+
+frame_test_test = pd.DataFrame()
+frame_test_test_update = pd.DataFrame()
+pace = 0
+
+fo_result = open('%d/performance_ten_bi_%d_%d.txt' % (file,c1,c2), 'w')
+print len(frame_test_with_cc)
+    
+print len(frame_train_train)
+result = []
+while (pace < wholelength - windowrange):
+    new_data = frame_test_with_cc[pace:pace + windowrange - 1]
+    
+    if pace == 0:
+        frame_train_train = [frame_train_train,frame_test_test[:windowrange/3]]
+        frame_train_train = pd.concat(frame_train_train)
+        frame_train_count = [frame_train_count,frame_test_test[(windowrange/3)+1:]]
+        frame_train_count = pd.concat(frame_train_count)
+        frame_test_test = new_data
+        fo_train_train = open('%d/train.train.txt' % file, 'w')
+        fo_train_count = open('%d/train.count.txt' % file, 'w')
+        fo_test = open('%d/test.test.txt' % file, 'w')
+        fo_test1 = open('%d/test.valid.txt' % file, 'w')
+
+        frame_train_train.to_csv(fo_train_train, index=False)
+        frame_train_count.to_csv(fo_train_count, index=False)
+        frame_test_test.to_csv(fo_test, index=False)
+        frame_test_test.to_csv(fo_test1, index=False)
+        print pace/10000
+        os.system("python -W ignore make_bi_new.py 11")
+        rc = subprocess.Popen(['bash','/home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver.sh'],stdout=subprocess.PIPE)
+        out = rc.communicate()[0]
+        fo_result.write(out)
+        fo_result.write('end')
+    else:
+    
+        frame_test_test = new_data        
+        #fo_train_count = open('%d/train.count.txt' % file, 'w')
+        fo_test = open('%d/test.test.txt' % file, 'w')
+        fo_test1 = open('%d/test.valid.txt' % file, 'w')
+
+        frame_test_test.to_csv(fo_test, index=False)
+        frame_test_test.to_csv(fo_test1, index=False)
+        print pace/10000
+        os.system("python -W ignore make_bi_new_update.py 11")
+        #os.system("bash /home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_update.sh")
+        rc = subprocess.Popen(['bash','/home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_update.sh'],stdout=subprocess.PIPE)
+        out = rc.communicate()[0]
+        fo_result.write(out)
+        fo_result.write('end')
+    pace = pace + windowrange
+\end{lstlisting}
+3. Cold Start for Counting Feature
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+__author__ = 'gaoxinyang'
+# !/usr/bin/python
+__author__ = 'gaoxinyang'
+import pandas as pd
+import sys
+import operator
+import random
+from collections import Counter
+from math import sqrt
+import math
+import matplotlib.pyplot as plt
+import collections
+from random import shuffle
+import subprocess
+import os
+import numpy as np
+
+
+def log_10_product(x, pos):
+    """The two args are the value and tick position.
+    Label ticks with the product of the exponentiation"""
+    return '%1i' % (x)
+
+
+def k_means(data_pts, k=None):
+    """ Helper functions """
+
+    def lists_are_same(la, lb):  # see if two lists have the same elements
+        out = False
+        for item in la:
+            if item not in lb:
+                out = False
+                break
+            else:
+                out = True
+        return out
+
+    def distance(a, b):  # distance between (x,y) points a and b
+        return sqrt(abs(a[0] - b[0]) ** 2 + abs(a[1] - b[1]) ** 2)
+
+    def average(a):  # return the average of a one-dimensional list (e.g., [1, 2, 3])
+        return sum(a) / float(len(a))
+
+    """ Set up some initial values """
+    if k is None:  # if the user didn't supply a number of means to look for, try to estimate how many there are
+        n = len(data_pts)  # number of points in the dataset
+        k = int(sqrt(n / 2))  # number of clusters - see
+        #   http://en.wikipedia.org/wiki/Determining_the_number_of_clusters_in_a_data_set#Rule_of_thumb
+    if k < 1:  # make sure there's at least one cluster
+        k = 1
+
+    """ Randomly generate k clusters and determine the cluster centers,
+        or directly generate k random points as cluster centers. """
+
+    init_clusters = data_pts[:]  # put all of the data points into clusters
+    shuffle(init_clusters)  # put the data points in random order
+    init_clusters = init_clusters[0:k]  # only keep the first k random clusters
+
+    old_clusters, new_clusters = {}, {}
+    for item in init_clusters:
+        old_clusters[item] = []  # every cluster has a list of points associated with it. Initially, it's 0
+
+    while 1:  # just keep going forever, until our break condition is met
+        tmp = {}
+        for k in old_clusters:  # create an editable version of the old_clusters dictionary
+            tmp[k] = []
+
+        """ Associate each point with the closest cluster center. """
+        for point in data_pts:  # for each (x,y) data point
+            min_clust = None
+            min_dist = 1000000000  # absurdly large, should be larger than the maximum distance for most data sets
+            for pc in tmp:  # for every possible closest cluster
+                pc_dist = distance(point, pc)
+                if pc_dist < min_dist:  # if this cluster is the closest, have it be the closest (duh)
+                    min_dist = pc_dist
+                    min_clust = pc
+            tmp[min_clust].append(point)  # add each point to its closest cluster's list of associated points
+
+        """ Recompute the new cluster centers. """
+        for k in tmp:
+            associated = tmp[k]
+            xs = [pt[0] for pt in associated]  # build up a list of x's
+            ys = [pt[1] for pt in associated]  # build up a list of y's
+            x = average(xs)  # x coordinate of new cluster
+            y = average(ys)  # y coordinate of new cluster
+            new_clusters[(
+                x,
+                y)] = associated  # these are the points the center was built off of, they're *probably* still associated
+
+        if lists_are_same(old_clusters.keys(), new_clusters.keys()):  # if we've reached equilibrium, return the points
+            return old_clusters.keys()
+        else:  # otherwise, we'll go another round. let old_clusters = new_clusters, and clear new_clusters.
+            old_clusters = new_clusters
+            new_clusters = {}
+
+
+def getplacement(path_train):
+    frame_train = pd.read_csv(path_train)
+    count = {}
+    ctr = {}
+    length = len(frame_train)
+    frame_train_count = frame_train
+    # print frame_train[:10]
+    column = 'placement_id'
+
+    count[column] = frame_train_count.groupby(column).size()
+    count[column] = count[column].astype(float)
+    frame_train_ctr = frame_train_count[(frame_train_count.click_count == 1)]
+    ctr[column] = frame_train_ctr.groupby(column).size()
+    dict_count = count[column]
+    dict_ctr = ctr[column]
+    clickhuge = [k for k in dict_ctr.keys() if dict_ctr[k] >= 500 and dict_count[k] >= 30000]
+
+    return (count, ctr, clickhuge)
+
+def getclient(path_train):
+    frame_train = pd.read_csv(path_train)
+    count = {}
+    ctr = {}
+    length = len(frame_train)
+    frame_train_count = frame_train
+    # print frame_train[:10]
+    column = 'client_id'
+
+    count[column] = frame_train_count.groupby(column).size()
+    count[column] = count[column].astype(float)
+    frame_train_ctr = frame_train_count[(frame_train_count.click_count == 1)]
+    ctr[column] = frame_train_ctr.groupby(column).size()
+    dict_count = count[column]
+    dict_ctr = ctr[column]
+    clickhuge = [k for k in dict_ctr.keys() if dict_ctr[k] >= 400]
+    return (count, ctr, clickhuge)
+cnt = Counter()
+ctrcount = Counter()
+pd.options.display.float_format = '{:.30f}'.format
+file = sys.argv[1]
+file = int(float(file))
+
+path_train = '%d/train.log.txt' % file
+path_test = '%d/test.log.txt' % file
+
+# count_train, ctr_train, clickhuge_train = getplacement(path_train)
+
+ccc1 = []
+ccc2 = []
+cc1 = []
+c1 = sys.argv[2]
+c1 = int(float(c1))
+cc1.append(c1)
+
+c2 = sys.argv[3]
+c2 = int(float(c2))
+cc2.append(c2)
+
+ccc1 = cc1
+frame_train_wihout_cc = frame_train.loc[frame_train[column].isin(ccc1)]
+rows = random.sample(frame_train_wihout_cc.index, (len(frame_train_wihout_cc.index) / 3))
+frame_train_train = frame_train_wihout_cc.ix[rows]
+frame_train_count = frame_train_wihout_cc.drop(rows)
+#ccc2.append(cc2[1])
+ccc2 = cc2
+frame_test_with_cc = frame_train.loc[frame_train[column].isin(ccc2)]
+frame_test_with_cc=frame_test_with_cc.iloc[np.random.permutation(len(frame_test_with_cc))]
+frame_test_with_cc = frame_test_with_cc.reset_index(drop=True)
+#frame_test_with_cc = frame_test_with_cc.reindex(np.random.permutation(frame_test_with_cc.index))
+
+wholelength = len(frame_test_with_cc)
+#print wholelength
+windowrange = 50000                          
+
+frame_test_test = pd.DataFrame()
+frame_test_test_update = pd.DataFrame()
+pace = 0
+fo_result = open('%d/performance_ten_count_%d_%d.txt' % (file,c1,c2), 'w')
+result = []
+while (pace < wholelength - windowrange):
+    # if frame_test_with_cc.shape[0] > 150000: # len(df) > 10 would also work
+    new_data = frame_test_with_cc[pace:pace + windowrange - 1]
+    if pace == 0:
+        frame_train_train = [frame_train_train,frame_test_test[:windowrange/3]]
+        frame_train_train = pd.concat(frame_train_train)
+        frame_train_count = [frame_train_count,frame_test_test[(windowrange/3)+1:]]
+        frame_train_count = pd.concat(frame_train_count)
+
+        frame_test_test = new_data
+        fo_train_train = open('%d/train.train.txt' % file, 'w')
+        fo_train_count = open('%d/train.count.txt' % file, 'w')
+        fo_test = open('%d/test.test.txt' % file, 'w')
+        fo_test1 = open('%d/test.valid.txt' % file, 'w')
+
+        frame_train_train.to_csv(fo_train_train, index=False)
+        frame_train_count.to_csv(fo_train_count, index=False)
+        frame_test_test.to_csv(fo_test, index=False)
+        frame_test_test.to_csv(fo_test1, index=False)
+        os.system("python -W ignore make_count_new.py 11")
+        #os.system("bash /home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_count.sh")
+        rc = subprocess.Popen(['bash','/home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_count.sh'],stdout=subprocess.PIPE)
+
+        out = rc.communicate()[0]
+        fo_result.write(out)
+        fo_result.write('end')
+    else:
+        
+        frame_test_test_update = [frame_test_test_update,frame_test_test]
+        frame_test_test_update  = pd.concat(frame_test_test_update)
+        frame_test_test = new_data
+        fo_train_count = open('%d/train.count.txt' % file, 'w')
+        fo_test = open('%d/test.test.txt' % file, 'w')
+        fo_test1 = open('%d/test.valid.txt' % file, 'w')
+        frame_test_test_update.to_csv(fo_train_count, index=False)
+        frame_test_test.to_csv(fo_test, index=False)
+        frame_test_test.to_csv(fo_test1, index=False)
+        
+        os.system("python -W ignore make_count_new_update.py 11")
+        #os.system("bash /home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_count_update.sh")
+        rc = subprocess.Popen(['bash','/home/gaoxinyang/data/ctr-counting-features/models/lr/lr-driver_count_update.sh'],stdout=subprocess.PIPE)
+        out = rc.communicate()[0]
+        fo_result.write(out)
+        fo_result.write('end')
+    pace = pace + windowrange
+\end{lstlisting}
+4. Marginal Distribution Generalization for Counting Feature (Similar to that of Binary Feature, and also for the generalization of feature space
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+import datetime
+import pprint
+
+import numpy as np
+import pandas as pd
+from pandas.io.data import DataReader
+import pylab as plt
+import sklearn
+from sklearn.cross_validation import train_test_split, KFold
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import mean_squared_error
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.datasets import load_svmlight_file
+from scipy import sparse
+
+import pandas
+import random
+import math
+from sklearn.metrics import roc_auc_score
+from sklearn.metrics import confusion_matrix
+from matplotlib import pyplot
+from math import log
+from collections import Counter
+from sklearn.metrics import matthews_corrcoef
+
+
+def sigmoid(p):
+    p = max(p,-200)
+    
+    return 1.0 / (1.0 + math.exp(-p))
+
+def pred(x,w_0,w):
+    p = w_0
+    
+    for (feat, val) in x:
+        
+        if feat < 25:
+          
+          p += w[feat] * val 
+    p = sigmoid(p)
+
+    return p
+
+def one_data_y_x(line,one_value):
+    
+    s = line.strip().replace(':', ' ').split(' ')
+
+    
+    y = int(s[0])
+    x = []
+    for i in range(1, len(s), 2):
+        #val = 1
+        if not one_value:
+            
+            try:
+              val = float(s[i+1])
+              #val = sigmoid(float(s[i+1])*weights[int(s[i])])
+            except:
+              val = 0
+        x.append((int(s[i]), val))
+    return (y, x)
+
+def logistic_regression(one_v,feature_n,fi_train,fi_test,weights):
+    np.random.seed(10)
+    one_value = one_v
+    k = 3
+    learning_rate = 0.005
+    weight_decay = 1E-30
+    train_rounds = 10
+    buffer_num = 1000000
+    feature_index = {}
+    index_feature = {}
+    max_feature_index = 0
+    feature_num = feature_n
+
+    init_weight = 0.1
+    w = np.zeros(feature_num)
+    w_0 = 0
+
+# train
+    best_auc = 0.
+    overfitting = False
+    for round in range(1, train_rounds+1):
+        
+        #fi = open(sys.argv[1], 'r')
+        line_num = 0
+        train_data = []
+        
+        fi = open(fi_train, 'r')
+        line_num = 0
+        train_data = []
+        while True:
+            line = fi.readline().strip()
+            
+            if len(line) > 0:
+                line_num = (line_num + 1) % buffer_num
+                s = line.strip('\0').replace(':', ' ').split(' ')
+                try:
+                  train_data.append(one_data_y_x(line,one_value))
+                except:
+                  pass
+                    
+            if line_num == 0 or len(line) == 0:
+                for data in train_data:
+                    y = data[0]
+                    x = data[1]
+                # train one data
+                    p = pred(x,w_0,w)
+                    d = y - p
+                    w_0 = w_0 * (1 - weight_decay) + learning_rate * d
+                    for (feat, val) in x:
+                        if feat < 25:
+                            w[feat] = w[feat] * (1 - weight_decay) + learning_rate * d * val
+                train_data = []
+            if len(line) == 0:
+                break
+        fi.close()
+        y = []
+        yp = []
+        fi = open(fi_test, 'r')
+        for line in fi:
+            s = line.strip('\0').replace(':', ' ').split(' ')
+            if len(s) == 49:
+              data = one_data_y_x(line,one_v)
+              clk = data[0]
+              pclk = pred(data[1],w_0,w)
+              y.append(clk)
+              yp.append(pclk)
+        fi.close()
+        ypp = map(lambda x: 1 if x > 0.5 else 0, yp)
+        result = confusion_matrix(y,ypp)
+        auc = roc_auc_score(y, yp)
+        rmse = math.sqrt((mean_squared_error(y, yp)))
+    
+    return rmse
+def create_lagged_series(symbol, start_date, end_date, lags=5):
+    """
+    This creates a pandas DataFrame that stores the percentage returns of the 
+    adjusted closing value of a stock obtained from Yahoo Finance, along with 
+    a number of lagged returns from the prior trading days (lags defaults to 5 days).
+    Trading volume, as well as the Direction from the previous day, are also included.
+    """
+
+    # Obtain stock information from Yahoo Finance
+    ts = DataReader(symbol, "yahoo", start_date-datetime.timedelta(days=365), end_date)
+
+    # Create the new lagged DataFrame
+    tslag = pd.DataFrame(index=ts.index)
+    tslag["Today"] = ts["Adj Close"]
+    tslag["Volume"] = ts["Volume"]
+
+    # Create the shifted lag series of prior trading period close values
+    for i in xrange(0,lags):
+        tslag["Lag%s" % str(i+1)] = ts["Adj Close"].shift(i+1)
+
+    # Create the returns DataFrame
+    tsret = pd.DataFrame(index=tslag.index)
+    tsret["Volume"] = tslag["Volume"]
+    tsret["Today"] = tslag["Today"].pct_change()*100.0
+
+    # If any of the values of percentage returns equal zero, set them to
+    # a small number (stops issues with QDA model in scikit-learn)
+    for i,x in enumerate(tsret["Today"]):
+        if (abs(x) < 0.0001):
+            tsret["Today"][i] = 0.0001
+
+    for i in xrange(0,lags):
+        tsret["Lag%s" % str(i+1)] = tslag["Lag%s" % str(i+1)].pct_change()*100.0
+
+    tsret["Direction"] = np.sign(tsret["Today"])
+    tsret = tsret[tsret.index >= start_date]
+    return tsret
+def validation_set_poly(random_seeds, degrees, X, y):
+    """
+    Use the train_test_split method to create a
+    training set and a validation set (50% in each)
+    using "random_seeds" separate random samplings over
+    linear regression models of varying flexibility
+    """
+    sample_dict = dict([("seed_%s" % i,[]) for i in range(1, random_seeds+1)])
+    
+    for i in range(1, random_seeds+1):
+        for d in range(1, degrees+1):
+            polynomial_features = PolynomialFeatures(
+                degree=d, include_bias=False
+            )
+            linear_regression = LogisticRegression()
+            model = Pipeline([
+                ("polynomial_features", polynomial_features),
+                ("linear_regression", linear_regression)
+            ])
+            X_train, X_test, y_train, y_test = train_test_split(
+                X, y, test_size=0.5, random_state=i
+            )
+            model.fit(X_train, y_train)
+            # Calculate the test MSE and append to the
+            # dictionary of all test curves
+            y_pred = model.predict(X_test)
+            
+            test_mse = mean_squared_error(y_test, y_pred)
+            print test_mse
+            sample_dict["seed_%s" % i].append(test_mse)
+           
+    sample_dict["avg"] = np.zeros(degrees)
+    for i in range(1, random_seeds+1):
+        sample_dict["avg"] += sample_dict["seed_%s" % i]
+    sample_dict["avg"] /= float(random_seeds)
+    return sample_dict
+
+def k_fold_cross_val_poly(folds, degrees,data,one_v,feature_n,weights):
+    n = len(data)
+    kf = KFold(n, n_folds=folds)
+    kf_dict = dict([("fold_%s" % i,[]) for i in range(1, folds+1)])
+    fold = 0
+    for train_index, test_index in kf:
+        fold += 1
+        #print "Fold: %s" % fold
+        data_train, data_test = data.ix[train_index], data.ix[test_index]
+        fo_train = open('13/temp.train.txt' , 'w')
+        fo_test = open('13/temp.test.txt' , 'w')
+        data_train.to_csv(fo_train, index=False,sep=' ')
+        data_test.to_csv(fo_test,index=False,sep=' ')
+        fo_train_path = '13/temp.train.txt'
+        fo_test_path = '13/temp.test.txt'
+        for d in range(1, degrees+1):
+            polynomial_features = PolynomialFeatures(
+                degree=d, include_bias=False
+            )
+            
+            test_mse = logistic_regression(one_v,feature_n,fo_train_path,fo_test_path,weights)
+
+            kf_dict["fold_%s" % fold].append(test_mse)
+
+    return kf_dict
+if __name__ == "__main__":
+    symbol = "^FTSE"
+
+    index_file = [8908, 14501, 22134, 1414, 20224, 16280, 12482 ,1371, 15140, 20762]
+    index_file1 = [8908, 14501, 22134, 1414, 20224, 16280, 12482 ,1371, 15140, 20762]
+    
+    result_variance = {}
+    result_bi = []
+    result_bi_mean = []
+    result_bi_mean_auc = [] 
+    result_bi_auc = []
+    result_a_distance = []
+
+    for index in range(0,len(index_file)):
+    	#path = '13/train.bi.%d.txt' % index_file[index]
+        path = '13/train.countfeature.%d.txt' % index_file[index]
+        with open('/home/gaoxinyang/data/13/weights_count_%d.txt' %index_file[index]) as f:
+        	lines = f.read().splitlines()
+        	weights = lines
+        	weights = [float(x) for x in weights] 
+        data_train = pd.read_csv(path,dtype=str,error_bad_lines = False,header=None,sep = ' ')
+        rows = random.sample(data_train.index, (len(data_train.index) / 200))
+        data_train = data_train.ix[rows]
+        data_train.ix[:,0] = int(1)
+        print len(data_train)
+        print index
+        for index_test in range(0,len(index_file1)):
+            print index_test
+            path1 = '13/train.countfeature.%d.txt' % index_file1[index_test]
+            data_test = pd.read_csv(path1,dtype=str,error_bad_lines = False,header=None,sep = ' ')
+            #data_test = data_test[(data_test.ix[:,0] == str(1))]
+            rows = random.sample(data_test.index, (len(data_test.index) / 200))
+            data_test = data_test.ix[rows]
+            
+            data_test.ix[:,0] = int(0)
+            print len(data_test)
+            frames = [data_train,data_test]
+            data = pd.concat(frames,ignore_index=True)
+            data=data.iloc[np.random.permutation(len(data))]
+            data = data.reset_index(drop=True)
+    	    degrees = 1
+    	    folds = 5
+            kf_dict = k_fold_cross_val_poly(folds, degrees,data,False,24,weights)
+    #print kf_dict
+    	    rmse_ = []
+            
+    	    for fold in range(1,5):
+        	x = kf_dict["fold_%s" % fold][0]
+        	rmse_.append(x)
+                    
+            rmse_ = [x for x in rmse_ if x is not None]
+            rmse_ = [x for x in rmse_ if x != 0]
+    	    variance = np.std(rmse_)
+            mean = np.mean(rmse_)
+            a_distance = 2*(1-2*mean)
+            result_bi_mean.append(mean) 
+            result_bi.append(variance)
+            result_a_distance.append(a_distance)
+            result_bi_mean.append(mean) 
+            result_bi.append(variance)
+    fow = open('/home/gaoxinyang/data/13/result_count_variance.txt', 'w')
+    for item in result_bi:
+        fow.write("%s\n" % str(item)) 
+    fow1 = open('/home/gaoxinyang/data/13/result_count_mean.txt', 'w')
+    for item in result_bi_mean:
+        fow1.write("%s\n" % str(item)) 
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{blue},
+        commentstyle=\color{comments},
+        stringstyle=\color{black},
+        showstringspaces=false,
+        identifierstyle=\color{black}}
+\begin{lstlisting}[numbers=left, breaklines=true]
+\end{lstlisting}
+

@@ -121,7 +121,7 @@
 %  The only difference between an MPhil and a PhD thesis is on the front cover, being the string
 %  in the submission statement.  Make PhD the default.
 %    \begin{macrocode}
-\newcommand \@doctor{Doctor of Philosophy}
+\newcommand \@doctor{Master of Science}
 \newcommand \@master{Master of Philosophy}
 \newcommand \@mres{Master of Research}
 \newcommand \@degree@string{\@doctor}
@@ -429,10 +429,10 @@
     \end{center}%
     \vfill%
     \begin{center}%
-    A dissertation submitted in partial fulfillment \\
-    of the requirements for the degree of \\
-    \textbf{\@degree@string} \\
-    of \\
+    This report is submitted as part requirement for \\
+     for the MSc Degree in ICT Innovation of\\
+    
+     
     \textbf{University College London}.
     \end{center}%
     \vspace{2em}%
@@ -458,7 +458,7 @@
        \newcommand \makedeclaration {%
          \clearpage%
          I, \@author , confirm that the work presented in this thesis is my own.
-         Where information has been derived from other sources, I confirm that this has been indicated in the work.
+         It is substantially the result of my own work except where explicitly indicated in the text. The report will be distributed to the internal and external examiners, but thereafter may not be copied or distributed except with permission from the author.
          \gdef \@author{}%
          \clearpage%
        }%
